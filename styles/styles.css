@@ -17,8 +17,8 @@ body,
   margin: 0;
   border-bottom-left-radius: 10px;
   border: 1px solid #000000;
-  padding-inline-start: 20px;
-  padding-inline-end: 20px;
+  padding-inline-start: 10px;
+  padding-inline-end: 10px;
 }
 /* #name-input {
  

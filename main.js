@@ -7,6 +7,7 @@ let marker = null;
 let placesData = JSON.parse(localStorage.getItem("places"));
 const app = placesData ? new App(placesData) : new App([]);
 const markerGroup = L.layerGroup();
+let isNew = true;
 
 /*****************************
  ********Paint the map********
@@ -35,7 +36,7 @@ L.tileLayer(
  **************************************************/
 for (const oldPlace of app.places) {
   // const { location, date } = oldPlace;
-  // const { latitude, longitude } = location;
+  // const { latitude, longitude } = coordinates;
   place = new Place(oldPlace);
   console.log(oldPlace);
   place.addMarker(false, map).addTo(markerGroup);
@@ -51,28 +52,40 @@ function getCurrentPlace() {
     //getCurrentPosition is async
     geo.getCurrentPosition((p) => {
       map.setView([p.coords.latitude, p.coords.longitude], 13);
-      const newLocation = {
+      const newCoordinates = {
         latitude: p.coords.latitude,
         longitude: p.coords.longitude,
       };
       place = new Place({
-        location: newLocation,
+        coordinates: newCoordinates,
         date: new Date(p.timestamp),
+        name: document.getElementById("name-input").value,
       });
-      marker = place.addMarker(true, map);
+      marker = place.addMarker(isNew, map);
     });
   } else {
     console.log(`Your browser does not support geolocation`);
   }
 }
 getCurrentPlace();
+/*************************************************
+ ***************** change name *******************
+ *************************************************/
+
+document.getElementById("name-input").addEventListener("input", (e) => {
+  place.setName(e.target.value);
+  marker.remove();
+  marker = place.addMarker(isNew, map);
+});
 
 /*************************************************
  ***************** Refresh Location***************
  *************************************************/
+
 document.getElementById("refresh-btn").addEventListener("click", (e) => {
   marker.remove();
   getCurrentPlace();
+  isNew = true;
 });
 
 /****************************
@@ -86,6 +99,7 @@ mapContainer.addEventListener("click", (e) => {
     app.addPlace(place);
     console.log(map);
     marker.remove();
-    place.addMarker(false, map).addTo(markerGroup);
+    isNew = false;
+    place.addMarker(isNew, map).addTo(markerGroup);
   }
 });
