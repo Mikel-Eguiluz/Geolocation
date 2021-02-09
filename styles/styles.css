@@ -1,0 +1,14 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+html,
+body,
+#map-container {
+  height: 100%;
+  width: 100vw;
+}
+/* FontAwesome Icons mess with the buttons */
+button > i {
+  pointer-events: none;
+}
