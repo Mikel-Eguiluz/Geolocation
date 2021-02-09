@@ -34,7 +34,10 @@ L.tileLayer(
  *****************place previous markers***********
  **************************************************/
 for (const oldPlace of app.places) {
+  // const { location, date } = oldPlace;
+  // const { latitude, longitude } = location;
   place = new Place(oldPlace);
+  console.log(oldPlace);
   place.addMarker(false, map).addTo(markerGroup);
 }
 
@@ -48,10 +51,12 @@ function getCurrentPlace() {
     //getCurrentPosition is async
     geo.getCurrentPosition((p) => {
       map.setView([p.coords.latitude, p.coords.longitude], 13);
-
-      place = new Place({
+      const newLocation = {
         latitude: p.coords.latitude,
         longitude: p.coords.longitude,
+      };
+      place = new Place({
+        location: newLocation,
         date: new Date(p.timestamp),
       });
       marker = place.addMarker(true, map);

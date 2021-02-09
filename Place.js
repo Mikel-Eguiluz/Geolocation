@@ -1,11 +1,19 @@
 export default class Place {
-  constructor({ latitude, longitude, date }) {
-    this.latitude = latitude;
-    this.longitude = longitude;
+  // location = {
+  //   latitude =0 ,
+  //   longitude =0
+  // }
+  constructor({ location, date }) {
+    this.location = location;
+    // this.location.latitude = latitude;
+    // this.location.longitude = longitude;
     this.date = date;
   }
   addMarker(isNew, map) {
-    const marker = L.marker([this.latitude, this.longitude]).addTo(map);
+    const marker = L.marker([
+      this.location.latitude,
+      this.location.longitude,
+    ]).addTo(map);
     marker
       .bindPopup(
         `<div class="center-align"><b>I WAS HERE ON</b><br>${
