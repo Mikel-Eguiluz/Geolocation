@@ -1,20 +1,16 @@
 import Place from "./Place.js";
 import App from "./App.js";
-//LEAFLET L included as script in index.html
+
 const mapContainer = document.getElementById("map-container");
 let place = null;
 let marker = null;
 const markerGroup = L.layerGroup();
 let isNew = true;
 
-// const testplace = new Place();
-
-//let placesData = JSON.parse(localStorage.getItem("places"));
-//const app = placesData ? new App(placesData) : new App([]);
 /*****************************
  ********Paint the map********
  ****************************/
-
+//LEAFLET L included as script in index.html
 const map = L.map(mapContainer, {
   //center: [latitude, longitude],
   center: [0, 0],
@@ -54,7 +50,8 @@ function getCurrentPlace() {
         name: document.getElementById("name-input").value,
       });
 
-      console.log("finished getting coords");
+      //console.log("finished getting coords");
+      //console.log("place date", place.date.toISOString());
     });
   } else {
     console.log(`Your browser does not support geolocation`);
@@ -119,7 +116,7 @@ mapContainer.addEventListener("click", (e) => {
     e.stopPropagation();
     console.log(app);
     app.addPlace(place);
-    console.log(map);
+    //console.log(map);
     marker.remove();
     isNew = false;
     place.addMarker(isNew, map).addTo(markerGroup);
