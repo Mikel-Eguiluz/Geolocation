@@ -64,7 +64,7 @@ export default class App {
       const data = await response.json();
       //this one has an ID
       const newPlace = new Place(data.data.createPlace);
-      this.places.push(newPLace);
+      this.places.push(newPlace);
       this.saveToLS();
       console.log(newPlace);
     } catch (err) {
