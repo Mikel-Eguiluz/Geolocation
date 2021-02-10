@@ -1,6 +1,6 @@
-# Nic's Music Inventory
+# Geolocation
 
-JavaScript basics practice project. Small app to practice geolocation and Leaflet
+JavaScript basics practice project. Small app to practice geolocation and Leaflet. Ended up hooking it to a simple GraphQL Db
 
 ## Dependencies
 
