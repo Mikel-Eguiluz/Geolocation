@@ -4,11 +4,13 @@ import App from "./App.js";
 const mapContainer = document.getElementById("map-container");
 let place = null;
 let marker = null;
-let placesData = JSON.parse(localStorage.getItem("places"));
-const app = placesData ? new App(placesData) : new App([]);
 const markerGroup = L.layerGroup();
 let isNew = true;
 
+// const testplace = new Place();
+
+//let placesData = JSON.parse(localStorage.getItem("places"));
+//const app = placesData ? new App(placesData) : new App([]);
 /*****************************
  ********Paint the map********
  ****************************/
@@ -16,7 +18,7 @@ let isNew = true;
 const map = L.map(mapContainer, {
   //center: [latitude, longitude],
   center: [0, 0],
-  zoom: 1,
+  zoom: 13,
 });
 L.tileLayer(
   "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ3VzaWRhbSIsImEiOiJja2t3bjVkZXMwbHluMnlvNDN0dm4wYjV6In0.uJxsFoilfO6h_M3mw2j-YQ",
@@ -31,16 +33,6 @@ L.tileLayer(
       "pk.eyJ1IjoiZ3VzaWRhbSIsImEiOiJja2t3bjVkZXMwbHluMnlvNDN0dm4wYjV6In0.uJxsFoilfO6h_M3mw2j-YQ",
   },
 ).addTo(map);
-/*************************************************
- *****************place previous markers***********
- **************************************************/
-for (const oldPlace of app.places) {
-  // const { location, date } = oldPlace;
-  // const { latitude, longitude } = coordinates;
-  place = new Place(oldPlace);
-  console.log(oldPlace);
-  place.addMarker(false, map).addTo(markerGroup);
-}
 
 /*************************************************
  ************* Get Current Coordinates************
@@ -58,24 +50,52 @@ function getCurrentPlace() {
       };
       place = new Place({
         coordinates: newCoordinates,
-        date: new Date(p.timestamp),
+        date: p.timestamp,
         name: document.getElementById("name-input").value,
       });
-      marker = place.addMarker(isNew, map);
+
+      console.log("finished getting coords");
     });
   } else {
     console.log(`Your browser does not support geolocation`);
   }
 }
-getCurrentPlace();
+const app = new App([]);
+
+async function getStuff() {
+  await Promise.all([app.fetchPlaces(), getCurrentPlace()]);
+  return "finished";
+}
+
+// getCurrentPlace();
+/*************************************************
+ *****************place previous markers***********
+ **************************************************/
+
+//get data from GraphQL
+getStuff().then((r) => {
+  // app.fetchPlaces();
+  console.log(r);
+  console.log("app", app);
+  console.log("b4 for");
+  for (const oldPlace of app.places) {
+    // place = new Place(oldPlace);
+    console.log(oldPlace);
+    oldPlace.addMarker(false, map).addTo(markerGroup);
+  }
+
+  marker = place.addMarker(isNew, map);
+});
 /*************************************************
  ***************** change name *******************
  *************************************************/
 
 document.getElementById("name-input").addEventListener("input", (e) => {
-  place.setName(e.target.value);
-  marker.remove();
-  marker = place.addMarker(isNew, map);
+  if (isNew) {
+    place.setName(e.target.value);
+    marker.remove();
+    marker = place.addMarker(isNew, map);
+  }
 });
 
 /*************************************************
@@ -86,6 +106,8 @@ document.getElementById("refresh-btn").addEventListener("click", (e) => {
   marker.remove();
   getCurrentPlace();
   isNew = true;
+
+  marker = place.addMarker(isNew, map);
 });
 
 /****************************

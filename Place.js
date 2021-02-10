@@ -3,21 +3,21 @@ export default class Place {
   //   latitude =0 ,
   //   longitude =0
   // }
-  constructor({ coordinates, date, name = "I" }) {
+  constructor({ coordinates, date, name = "I", id = "NOID" }) {
     this.coordinates = coordinates;
     // this.coordinates.latitude = latitude;
     // this.coordinates.longitude = longitude;
-    this.date = date;
+    this.date = new Date(date);
     this.name =
       name === ""
-        ? "I"
+        ? "Someone"
         : name.trim().charAt(0).toUpperCase() + name.trim().slice(1);
-    this._id = Place.uuidv4();
+    this.id = id;
   }
   setName(name) {
     this.name =
       name === ""
-        ? "I"
+        ? "Someone"
         : name.trim().charAt(0).toUpperCase() + name.trim().slice(1);
   }
   addMarker(isNew, map) {
@@ -36,6 +36,7 @@ export default class Place {
         }`,
       )
       .openPopup();
+    map.setView([this.coordinates.latitude, this.coordinates.longitude], 13);
     return marker;
   }
   static uuidv4() {
