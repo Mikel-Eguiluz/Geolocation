@@ -91,9 +91,9 @@ document.getElementById("name-input").addEventListener("input", (e) => {
  ***************** Refresh Location***************
  *************************************************/
 
-document.getElementById("refresh-btn").addEventListener("click", (e) => {
+document.getElementById("refresh-btn").addEventListener("click", async () => {
   marker.remove();
-  getCurrentPlace();
+  await getCurrentPlace();
   marker = place.addMarker(map);
   map.panTo([place.coordinates.latitude, place.coordinates.longitude], 13);
 });
