@@ -3,7 +3,7 @@ export default class Place {
   //   latitude =0 ,
   //   longitude =0
   // }
-  constructor({ coordinates, date, name = "I", id = "NOID" }) {
+  constructor({ coordinates, date, name = "I", id = null }) {
     this.coordinates = coordinates;
     // this.coordinates.latitude = latitude;
     // this.coordinates.longitude = longitude;
@@ -20,23 +20,24 @@ export default class Place {
         ? "Someone"
         : name.trim().charAt(0).toUpperCase() + name.trim().slice(1);
   }
-  addMarker(isNew, map) {
+  addMarker(map) {
     const marker = L.marker([
       this.coordinates.latitude,
       this.coordinates.longitude,
     ]).addTo(map);
     marker
       .bindPopup(
-        `<div class="center-align"><b>${this.name} was here on<br>${
+        `<div class="center-align"><b>
+          ${this.name} was here on<br>${
           this.date.toString().split(" GMT")[0]
-        }.</b><br> ${
-          !isNew
-            ? ""
-            : '<button class="btn-small" id="save-location-btn">Save This</button></div>'
+        }.</b> ${
+          this.id
+            ? `<i class="fas fa-trash red-text text-darken-4" id="delete-location-btn" data-id= ${this.id}></i> `
+            : '<br><button class="btn-small" id="save-location-btn">Save This</button></div>'
         }`,
       )
       .openPopup();
-    map.setView([this.coordinates.latitude, this.coordinates.longitude], 13);
+
     return marker;
   }
 }

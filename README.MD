@@ -1,6 +1,6 @@
 # Geolocation
 
-JavaScript basics practice project. Small app to practice geolocation and Leaflet. Ended up hooking it to a simple GraphQL Db
+JavaScript basics practice project. Small app to practice geolocation and Leaflet. Ended up hooking it to a simple GraphQL Schema
 
 ## Dependencies
 

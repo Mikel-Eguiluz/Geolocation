@@ -7,22 +7,48 @@ export default class App {
   constructor(places) {
     this.places = places;
   }
-  setPaces(places) {
+  setPlaces(places) {
     this.places = places;
   }
   saveToLS() {
     localStorage.setItem(`places`, JSON.stringify(this.places));
   }
-  // addPlace(place) {
-  //   if (place instanceof Place) {
-  //     this.places.push(place);
-  //     this.saveToLS();
-  //     return place;
-  //   } else {
-  //     console.log(`place required, received ${place}`);
-  //     return null;
-  //   }
-  // }
+  deletePlace = async (id) => {
+    try {
+      const response = await fetch(GRAPHQL_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+            mutation deletePlace($where: PlaceWhereUniqueInput!) {
+              deletePlace(where: $where){
+                name
+              }
+            }`,
+          variables: {
+            // data: place,
+            where: {
+              id: id,
+            },
+          },
+        }),
+      });
+      if (response.status !== 200) {
+        throw response;
+      }
+      await response.json();
+      const index = this.places.findIndex((place) => place.id === id);
+      console.log(index);
+      this.places.splice(index, 1);
+      this.saveToLS();
+      console.log("deleted");
+    } catch (err) {
+      console.log("error", err);
+    }
+  };
   addPlace = async (place) => {
     console.log("about to add", place);
     try {
@@ -66,7 +92,8 @@ export default class App {
       const newPlace = new Place(data.data.createPlace);
       this.places.push(newPlace);
       this.saveToLS();
-      console.log(newPlace);
+      console.log("newplace", newPlace);
+      return newPlace;
     } catch (err) {
       console.log("error", err);
     }
@@ -96,6 +123,7 @@ export default class App {
         }),
       });
       if (response.status !== 200) {
+        //TODO if fetch fails, get from LS
         throw response;
       }
       const data = await response.json();

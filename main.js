@@ -5,7 +5,8 @@ const mapContainer = document.getElementById("map-container");
 let place = null;
 let marker = null;
 const markerGroup = L.layerGroup();
-let isNew = true;
+
+const app = new App([]);
 
 /*****************************
  ********Paint the map********
@@ -39,7 +40,7 @@ function getCurrentPlace() {
     const geo = navigator.geolocation;
     //getCurrentPosition is async
     geo.getCurrentPosition((p) => {
-      map.setView([p.coords.latitude, p.coords.longitude], 13);
+      //map.panTo([p.coords.latitude, p.coords.longitude], 13);
       const newCoordinates = {
         latitude: p.coords.latitude,
         longitude: p.coords.longitude,
@@ -50,48 +51,39 @@ function getCurrentPlace() {
         name: document.getElementById("name-input").value,
       });
 
-      //console.log("finished getting coords");
-      //console.log("place date", place.date.toISOString());
+      console.log("finished getting coords");
     });
   } else {
     console.log(`Your browser does not support geolocation`);
   }
 }
-const app = new App([]);
 
-async function getStuff() {
-  await Promise.all([app.fetchPlaces(), getCurrentPlace()]);
-  return "finished";
-}
-
-// getCurrentPlace();
 /*************************************************
  *****************place previous markers***********
  **************************************************/
-
-//get data from GraphQL
-getStuff().then((r) => {
-  // app.fetchPlaces();
-  console.log(r);
-  console.log("app", app);
-  console.log("b4 for");
+function placeOldMarkers() {
   for (const oldPlace of app.places) {
-    // place = new Place(oldPlace);
-    console.log(oldPlace);
-    oldPlace.addMarker(false, map).addTo(markerGroup);
+    oldPlace.addMarker(map).addTo(markerGroup);
   }
+}
 
-  marker = place.addMarker(isNew, map);
-});
+async function getStuff() {
+  await Promise.all([app.fetchPlaces(), getCurrentPlace()]);
+  console.log("app", app);
+  placeOldMarkers(map);
+  marker = place.addMarker(map);
+  map.panTo([place.coordinates.latitude, place.coordinates.longitude], 13);
+}
+getStuff();
 /*************************************************
  ***************** change name *******************
  *************************************************/
 
 document.getElementById("name-input").addEventListener("input", (e) => {
-  if (isNew) {
+  if (true) {
     place.setName(e.target.value);
     marker.remove();
-    marker = place.addMarker(isNew, map);
+    marker = place.addMarker(map);
   }
 });
 
@@ -102,23 +94,27 @@ document.getElementById("name-input").addEventListener("input", (e) => {
 document.getElementById("refresh-btn").addEventListener("click", (e) => {
   marker.remove();
   getCurrentPlace();
-  isNew = true;
-
-  marker = place.addMarker(isNew, map);
+  marker = place.addMarker(map);
+  map.panTo([place.coordinates.latitude, place.coordinates.longitude], 13);
 });
 
 /****************************
- ****Save Location to LS*****
+ ****Save/delete Location ***
  ****************************/
 
-mapContainer.addEventListener("click", (e) => {
+mapContainer.addEventListener("click", async (e) => {
   if (e.target && e.target.matches("button#save-location-btn")) {
     e.stopPropagation();
-    console.log(app);
-    app.addPlace(place);
-    //console.log(map);
+    place = await app.addPlace(place);
     marker.remove();
-    isNew = false;
-    place.addMarker(isNew, map).addTo(markerGroup);
+    place.addMarker(map).addTo(markerGroup);
+  } else if (e.target && e.target.matches("i#delete-location-btn")) {
+    e.stopPropagation();
+    await app.deletePlace(e.target.dataset.id);
+    for (const layer of markerGroup.getLayers()) {
+      layer.remove();
+    }
+    placeOldMarkers(map);
+    map.panTo([place.coordinates.latitude, place.coordinates.longitude], 13);
   }
 });
