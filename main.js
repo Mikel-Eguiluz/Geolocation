@@ -46,11 +46,16 @@ function getCurrentPlace() {
       date: p.timestamp,
       name: document.getElementById("name-input").value,
     });
-    if (marker != null) {
+    if (marker === null) {
       marker.remove();
+      marker = place.addMarker(map);
+      console.log("finished getting coords");
+    } else {
+      setLatLng(L.latLng(p.coords.latitude, p.coords.longitude));
+      console.log("moving");
     }
-    marker = place.addMarker(map);
-    console.log("finished getting coords");
+    // marker = place.addMarker(map);
+    // console.log("finished getting coords");
   }
   function error() {
     alert("Sorry, no position available.");
