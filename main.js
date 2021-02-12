@@ -46,6 +46,7 @@ function getCurrentPlace() {
       date: p.timestamp,
       name: document.getElementById("name-input").value,
     });
+    if (marker) marker.remove();
     marker = place.addMarker(map);
     console.log("finished getting coords");
   }
