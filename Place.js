@@ -27,9 +27,9 @@ export default class Place {
     ]).addTo(map);
     marker.bindPopup(
       `<div class="center-align"><b>
-          ${this.name} was here on<br>${
-        this.date.toString().split(" GMT")[0]
-      }.</b> ${
+         <span ${this.id ? "" : 'id="active-popup"'}>${
+        this.name
+      }</span> was here on<br>${this.date.toString().split(" GMT")[0]}.</b> ${
         this.id
           ? `<i class="fas fa-trash red-text text-darken-4" id="delete-location-btn" data-id= ${this.id}></i> `
           : '<br><button class="btn-small" id="save-location-btn">Save This</button></div>'

@@ -95,9 +95,14 @@ getStuff();
 
 document.getElementById("name-input").addEventListener("input", (e) => {
   if (true) {
-    place.setName(e.target.value);
-    marker.remove();
-    marker = place.addMarker(map);
+    //Todo this bugs when tracking
+    let newName = e.target.value;
+    if (newName === "") {
+      newName = "someone";
+    }
+    document.getElementById("active-popup").innerText = newName;
+    // marker.remove();
+    // marker = place.addMarker(map);
   }
 });
 
