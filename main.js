@@ -36,25 +36,32 @@ L.tileLayer(
  *************************************************/
 
 function getCurrentPlace() {
-  if ("geolocation" in navigator) {
-    const geo = navigator.geolocation;
-    //getCurrentPosition is async
-    geo.getCurrentPosition((p) => {
-      //map.panTo([p.coords.latitude, p.coords.longitude], 13);
-      const newCoordinates = {
-        latitude: p.coords.latitude,
-        longitude: p.coords.longitude,
-      };
-      place = new Place({
-        coordinates: newCoordinates,
-        date: p.timestamp,
-        name: document.getElementById("name-input").value,
-      });
-
-      console.log("finished getting coords");
+  function success(p) {
+    const newCoordinates = {
+      latitude: p.coords.latitude,
+      longitude: p.coords.longitude,
+    };
+    place = new Place({
+      coordinates: newCoordinates,
+      date: p.timestamp,
+      name: document.getElementById("name-input").value,
     });
+    marker = place.addMarker(map);
+    console.log("finished getting coords");
+  }
+  function error() {
+    alert("Sorry, no position available.");
+  }
+  const options = {
+    enableHighAccuracy: true,
+    maximumAge: 30000,
+    timeout: 27000,
+  };
+  if (!navigator.geolocation) {
+    console.log("Geolocation is not supported by your browser");
   } else {
-    console.log(`Your browser does not support geolocation`);
+    navigator.geolocation.watchPosition(success, error, options);
+    //navigator.geolocation.getCurrentPosition(success, error, options);
   }
 }
 
@@ -68,10 +75,10 @@ function placeOldMarkers() {
 }
 
 async function getStuff() {
-  await Promise.all([app.fetchPlaces(), getCurrentPlace()]);
+  console.log(await Promise.all([app.fetchPlaces(), getCurrentPlace()]));
   console.log("app", app);
   placeOldMarkers(map);
-  marker = place.addMarker(map);
+
   map.panTo([place.coordinates.latitude, place.coordinates.longitude], 13);
 }
 getStuff();
@@ -93,6 +100,7 @@ document.getElementById("name-input").addEventListener("input", (e) => {
 
 document.getElementById("refresh-btn").addEventListener("click", async () => {
   marker.remove();
+
   await getCurrentPlace();
   marker = place.addMarker(map);
   map.panTo([place.coordinates.latitude, place.coordinates.longitude], 13);
