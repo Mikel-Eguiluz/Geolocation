@@ -47,11 +47,10 @@ function getCurrentPlace() {
       name: document.getElementById("name-input").value,
     });
     if (marker === null) {
-      marker.remove();
       marker = place.addMarker(map);
       console.log("finished getting coords");
     } else {
-      setLatLng(L.latLng(p.coords.latitude, p.coords.longitude));
+      marker.setLatLng(L.latLng(p.coords.latitude, p.coords.longitude));
       console.log("moving");
     }
     // marker = place.addMarker(map);
@@ -83,7 +82,7 @@ function placeOldMarkers() {
 }
 
 async function getStuff() {
-  console.log(await Promise.all([app.fetchPlaces(), getCurrentPlace()]));
+  await Promise.all([app.fetchPlaces(), getCurrentPlace()]);
   console.log("app", app);
   placeOldMarkers(map);
 
