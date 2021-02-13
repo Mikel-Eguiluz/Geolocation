@@ -21,13 +21,30 @@ export default class Place {
         : name.trim().charAt(0).toUpperCase() + name.trim().slice(1);
   }
   addMarker(map) {
-    const marker = L.marker([
-      this.coordinates.latitude,
-      this.coordinates.longitude,
-    ]).addTo(map);
+    const flagIcon = {
+      icon: L.icon({
+        iconUrl: "./assets/images/flag-icon.png",
+        iconSize: [32, 37], // size of the icon
+        iconAnchor: [16, 33], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -15], // point from which the popup should open relative to the iconAnchor
+      }),
+    };
+    const dudeIcon = {
+      icon: L.icon({
+        iconUrl: "./assets/images/dude2.png",
+        iconSize: [17, 27], // size of the icon
+        iconAnchor: [8, 25], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -25], // point from which the popup should open relative to the iconAnchor
+      }),
+      zIndexOffset: 500,
+    };
+    const marker = L.marker(
+      [this.coordinates.latitude, this.coordinates.longitude],
+      !this.id ? dudeIcon : flagIcon,
+    ).addTo(map);
     marker.bindPopup(
       `<div class="center-align"><b>
-         <span ${this.id ? "" : 'id="active-popup"'}>${
+        <span ${this.id ? "" : 'id="active-popup"'}>${
         this.name
       }</span> was here on<br>${this.date.toString().split(" GMT")[0]}.</b> ${
         this.id

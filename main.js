@@ -58,7 +58,7 @@ function getCurrentPlace() {
     // console.log("finished getting coords");
   }
   function error() {
-    alert("Sorry, no position available.");
+    console.log("Sorry, no position available.");
   }
   const options = {
     enableHighAccuracy: true,
@@ -126,9 +126,10 @@ document.getElementById("refresh-btn").addEventListener("click", async () => {
 mapContainer.addEventListener("click", async (e) => {
   if (e.target && e.target.matches("button#save-location-btn")) {
     e.stopPropagation();
-    place = await app.addPlace(place);
-    marker.remove();
-    place.addMarker(map).addTo(markerGroup);
+    const newPlace = await app.addPlace(place);
+    newPlace.addMarker(map).addTo(markerGroup);
+    // marker.remove();
+    // place.;
   } else if (e.target && e.target.matches("i#delete-location-btn")) {
     e.stopPropagation();
     await app.deletePlace(e.target.dataset.id);
