@@ -34,9 +34,10 @@ export default class Place {
           ? `<i class="fas fa-trash red-text text-darken-4" id="delete-location-btn" data-id= ${this.id}></i> `
           : '<br><button class="btn-small" id="save-location-btn">Save This</button></div>'
       }`,
+      { autoPan: false },
     );
     if (!this.id) marker.openPopup();
-
+    console.log(marker.getPopup().options);
     return marker;
   }
 }
